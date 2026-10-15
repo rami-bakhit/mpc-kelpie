@@ -31,10 +31,10 @@
 #endif
 #endif
 
-#define WEBSITE_URL  _T("https://github.com/rami-bakhit/mpc-hc")
-#define DOWNLOAD_URL _T("https://github.com/rami-bakhit/mpc-hc/releases")
-#define UPDATE_URL   _T("https://github.com/rami-bakhit/mpc-hc/raw/main/kelpie-version.txt")
-#define BACKUP_UPDATE_URL   _T("https://cdn.jsdelivr.net/gh/rami-bakhit/mpc-hc@main/kelpie-version.txt")
+#define WEBSITE_URL  _T("https://github.com/rami-bakhit/mpc-kelpie")
+#define DOWNLOAD_URL _T("https://github.com/rami-bakhit/mpc-kelpie/releases")
+#define UPDATE_URL   _T("https://github.com/rami-bakhit/mpc-kelpie/raw/main/kelpie-version.txt")
+#define BACKUP_UPDATE_URL   _T("https://cdn.jsdelivr.net/gh/rami-bakhit/mpc-kelpie@main/kelpie-version.txt")
 #define TRAC_URL     _T("https://github.com/clsid2/mpc-hc/issues")
 #define BUGS_URL     _T("https://github.com/clsid2/mpc-hc/issues")
 

@@ -7,10 +7,10 @@ repository with the next upstream merge.
 ## Pull Requests
 
 1. Make sure you have a [GitHub account](https://github.com/signup/free).
-2. [Fork](https://github.com/rami-bakhit/mpc-hc/fork) this repository.
+2. [Fork](https://github.com/rami-bakhit/mpc-kelpie/fork) this repository.
 3. Create a new topic branch (based on the `main` branch) to contain your feature, change, or fix.
 4. **Set `core.autocrlf` to true: `git config core.autocrlf true`.**
-5. [Open a Pull Request](https://github.com/rami-bakhit/mpc-hc/pulls) against `main` with a clear title and description.
+5. [Open a Pull Request](https://github.com/rami-bakhit/mpc-kelpie/pulls) against `main` with a clear title and description.
 
 ### General development guidelines
 

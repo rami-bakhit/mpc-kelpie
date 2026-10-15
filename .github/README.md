@@ -61,7 +61,7 @@ MPC-Kelpie is not affiliated with or endorsed by the MPC-HC project.
 
 ## Download
 
-Download the [latest release](https://github.com/rami-bakhit/mpc-hc/releases/latest)
+Download the [latest release](https://github.com/rami-bakhit/mpc-kelpie/releases/latest)
 from the Releases page. Each release contains:
 
 - an installer, `MPC-Kelpie.<version>.x64.exe`
@@ -95,7 +95,7 @@ MPC-Kelpie is built the same way as MPC-HC. See
 repository with submodules:
 
 ```
-git clone --recursive https://github.com/rami-bakhit/mpc-hc.git
+git clone --recursive https://github.com/rami-bakhit/mpc-kelpie.git
 ```
 
 The default branch is `main`.
