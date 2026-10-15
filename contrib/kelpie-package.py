@@ -43,7 +43,7 @@ import tempfile
 import time
 import zipfile
 
-REPO_URL = "https://github.com/rami-bakhit/mpc-hc.git"
+REPO_URL = "https://github.com/rami-bakhit/mpc-kelpie.git"
 MPCVR_URL = "https://github.com/rami-bakhit/MPCVideoRenderer.git"
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
