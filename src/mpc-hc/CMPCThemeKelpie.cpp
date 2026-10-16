@@ -237,9 +237,6 @@ void CMPCTheme::InitializeKelpieColors() {
         //mode independent in the Windows 10 palette
         CloseHoverColor = Opaque(KelpieLight::SystemFillColorCritical); //windows 11 uses the same close red in both modes
         ClosePushColor = Flatten(ControlStrokeColorOnAccentSecondary, CloseHoverColor); //pressed close: the on-accent stroke darkens the red
-        W10DarkThemeFileDialogInjectedTextColor = Opaque(TextFillColorPrimary);
-        W10DarkThemeFileDialogInjectedBGColor = ControlAreaBGColor;
-        W10DarkThemeFileDialogInjectedEditBorderColor = Flatten(ControlStrokeColorSecondary, ControlAreaBGColor);
         W10DarkThemeTitlebarBGColor = base;
         W10DarkThemeTitlebarInactiveBGColor = base; //windows 11 keeps the titlebar colour and dims the text when inactive
         W10DarkThemeTitlebarFGColor = Opaque(TextFillColorPrimary);
@@ -375,12 +372,9 @@ void CMPCTheme::InitializeKelpieColors() {
         ComboboxArrowColorDisabled = Flatten(TextFillColorDisabled, ButtonFillColor);
         HeaderCtrlSortArrowColor = Flatten(TextFillColorSecondary, ContentBGColor);
 
-        //mode independent in the Windows 10 palette; the titlebar and file dialog slots are only drawn in dark mode
+        //mode independent in the Windows 10 palette; the titlebar slots are only drawn in dark mode
         CloseHoverColor = Opaque(SystemFillColorCritical); //windows 11 uses the same close red in both modes
         ClosePushColor = Flatten(ControlStrokeColorOnAccentSecondary, CloseHoverColor); //pressed close: the on-accent stroke darkens the red
-        W10DarkThemeFileDialogInjectedTextColor = TextFGColor;
-        W10DarkThemeFileDialogInjectedBGColor = ControlAreaBGColor;
-        W10DarkThemeFileDialogInjectedEditBorderColor = Flatten(ControlStrokeColorSecondary, ControlAreaBGColor);
         W10DarkThemeTitlebarBGColor = base;
         W10DarkThemeTitlebarInactiveBGColor = base;
         W10DarkThemeTitlebarFGColor = TextFGColor;
