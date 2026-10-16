@@ -14,6 +14,11 @@ the date the change was first made.
 - The repository is renamed to `rami-bakhit/mpc-kelpie`. Update checks
   and the download and website links use the new address (2026-10-15).
 
+### Fixed
+
+- Custom controls in dark Windows file dialogs use the correct colours
+  with the MPC-Kelpie theme in both light and dark mode (2026-10-16).
+
 ## [kelpie-2.8.2-2] - 2026-10-06
 
 Based on [clsid2/mpc-hc](https://github.com/clsid2/mpc-hc) `develop` at
