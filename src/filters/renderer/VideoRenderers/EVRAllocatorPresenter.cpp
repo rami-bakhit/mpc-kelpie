@@ -28,6 +28,7 @@
 #include "IMPCVideoDecFilter.h"
 #include "Utils.h"
 #include "Variables.h"
+#include "HLGInput.h"
 
 #if (0)     // Set to 1 to activate EVR traces
 #define TRACE_EVR   TRACE
@@ -301,6 +302,10 @@ STDMETHODIMP CEVRAllocatorPresenter::CreateRenderer(IUnknown** ppRenderer)
 
 STDMETHODIMP_(bool) CEVRAllocatorPresenter::Paint(bool bAll)
 {
+    // Once shut down the EVR may already be gone, so nothing of it can be drawn
+    if (m_nRenderState == Shutdown) {
+        return false;
+    }
     return __super::Paint(bAll);
 }
 
@@ -688,6 +693,27 @@ HRESULT CEVRAllocatorPresenter::IsMediaTypeSupported(IMFMediaType* pMixerType)
     return hr;
 }
 
+bool CEVRAllocatorPresenter::InputPinIsHLGNow()
+{
+    if (m_nRenderState != Started && m_nRenderState != Paused) {
+        return false;
+    }
+
+    CComPtr<IPin> pPin;
+    CMediaType    mt;
+    if (SUCCEEDED(m_pOuterEVR->FindPin(L"EVR Input0", &pPin)) && SUCCEEDED(pPin->ConnectionMediaType(&mt))) {
+        if (mt.formattype == FORMAT_VideoInfo2 || mt.formattype == FORMAT_MPEG2_VIDEO) {
+            VIDEOINFOHEADER2& vih2 = *(VIDEOINFOHEADER2*)mt.pbFormat;
+            if (vih2.dwControlFlags & AMCONTROL_COLORINFO_PRESENT) {
+                DXVA2_ExtendedFormat exfmt;
+                exfmt.value = vih2.dwControlFlags;
+                return exfmt.VideoTransferFunction == TRANSFER_FUNCTION_HLG;
+            }
+        }
+    }
+    return false;
+}
+
 HRESULT CEVRAllocatorPresenter::CreateOptimalOutputType(IMFMediaType* pMixerProposedType, IMFMediaType* pMixerInputType, IMFMediaType** ppType)
 {
     HRESULT hr;
@@ -724,6 +750,11 @@ HRESULT CEVRAllocatorPresenter::CreateOptimalOutputType(IMFMediaType* pMixerProp
     }
 
     pOptimalMediaType->SetUINT32(MF_MT_PAN_SCAN_ENABLED, 0);
+
+    // HLG input: the rendering engine converts it to SDR, from the very first frame
+    // (the decoder often signals HLG only in a format change after the first frames).
+    m_bHLGInput = MixerTypeIsHLG(pMixerInputType);
+    m_bHLGPinCheck = !m_bHLGInput;
 
     const CRenderersSettings& r = GetRenderersSettings();
 

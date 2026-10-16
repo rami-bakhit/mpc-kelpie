@@ -592,6 +592,10 @@ private:
     };
     std::vector<DeferredAction> m_deferredActions;
     bool m_bDeferredOnClose = false;
+    // the options sheet while ShowOptions has it up. Its modal pump is not a holder,
+    // since an open from in there is fine, but an exit would delete the frame under
+    // ShowOptions, so OnClose defers that one and cancels the sheet
+    CWnd* m_pOptionsSheet = nullptr;
     bool DeferIfNested(DeferredActionType type, std::function<void()> action);
 
     // a tracked popup or the menu bar is showing menus that a media change rebuilds
@@ -630,6 +634,9 @@ private:
     void OnVideoSizeChanged(const bool bWasAudioOnly = false);
 
     CDropTarget m_dropTarget;
+    // client coordinates of the last OnDropAccept call; OnDropFiles gets no point
+    CPoint m_lastDropPoint;
+    bool IsPlaylistDropWhileDisabled(CPoint ptClient) const;
     void OnDropFiles(CAtlList<CStringW>& slFiles, DROPEFFECT dropEffect) override;
     DROPEFFECT OnDropAccept(COleDataObject* pDataObject, DWORD dwKeyState, CPoint point) override;
 
@@ -1582,6 +1589,7 @@ public:
     CHdmvClipInfo::BDMVMeta GetBDMVMeta();
 
     bool GetDecoderType(CString& type) const;
+    CString GetAudioInfo() const;
 
     static bool IsOnYDLWhitelist(const CString url);
 
@@ -1614,17 +1622,6 @@ public:
     ULONGLONG m_lastSMTCThumbnailTick = 0;
 #endif
 
-    enum themableDialogTypes {
-        None,
-        windowsFileDialog,
-    };
-    void enableFileDialogHook(CMPCThemeUtil* helper);
-    void enableDialogHook(CMPCThemeUtil* helper, themableDialogTypes type);
-private:
-    themableDialogTypes watchingDialog, foundDialog;
-    CMPCThemeUtil* dialogHookHelper;
-
-public:
     afx_msg void OnSettingChange(UINT uFlags, LPCTSTR lpszSection);
     afx_msg void OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt);
 private:
