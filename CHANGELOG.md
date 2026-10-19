@@ -7,12 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Release tags are named `kelpie-<upstream version>-<n>`. Each entry includes
 the date the change was first made.
 
-## [Unreleased]
+## [kelpie-2.8.4-1] - 2026-10-19
+
+Based on [clsid2/mpc-hc](https://github.com/clsid2/mpc-hc) `develop` at
+`a19e22c0a` (2026-10-18).
 
 ### Changed
 
 - The repository is renamed to `rami-bakhit/mpc-kelpie`. Update checks
   and the download and website links use the new address (2026-10-15).
+- The bundled MPC Video Renderer is updated to our build of 0.10.9.2605,
+  based on clsid2/MPCVideoRenderer at `e55dd16`, with both Dolby Vision
+  colour control patches retained (2026-10-19).
 
 ### Fixed
 
@@ -103,6 +109,6 @@ New options are located in Options > Advanced and are disabled by default.
   [rami-bakhit/MPCVideoRenderer](https://github.com/rami-bakhit/MPCVideoRenderer),
   which also applies hue and saturation to Dolby Vision video (2026-09-26).
 
-[Unreleased]: https://github.com/rami-bakhit/mpc-kelpie/compare/kelpie-2.8.2-2...HEAD
+[kelpie-2.8.4-1]: https://github.com/rami-bakhit/mpc-kelpie/compare/kelpie-2.8.2-2...kelpie-2.8.4-1
 [kelpie-2.8.2-2]: https://github.com/rami-bakhit/mpc-kelpie/compare/kelpie-2.8.2-1...kelpie-2.8.2-2
 [kelpie-2.8.2-1]: https://github.com/rami-bakhit/mpc-kelpie/releases/tag/kelpie-2.8.2-1
