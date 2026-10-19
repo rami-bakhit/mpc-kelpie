@@ -75,10 +75,14 @@ SmartScreen may show a warning the first time the installer or the program
 is started.
 
 The release packages include MPC Video Renderer built from
-[rami-bakhit/MPCVideoRenderer](https://github.com/rami-bakhit/MPCVideoRenderer).
-It is the renderer used in MPC-HC releases with one change: hue and saturation
-in Color Controls also apply to Dolby Vision video. The release notes state
-the renderer commit each release is built from.
+[rami-bakhit/MPCVideoRenderer](https://github.com/rami-bakhit/MPCVideoRenderer),
+with patches that allow hue and saturation in Color Controls to apply to
+Dolby Vision video in both DirectX 9 and DirectX 11 modes.
+
+MPC-Kelpie 2.8.4-1 includes our build of MPC Video Renderer 0.10.9.2605,
+from commit `77ef37c`, based on clsid2/MPCVideoRenderer at `e55dd16`.
+It does not include the HDR-to-SDR tone mapping improvements in
+MPC Video Renderer 0.10.10.2618 bundled with MPC-HC 2.8.4.
 
 ## Running alongside MPC-HC
 
