@@ -116,7 +116,7 @@
 #include "MPCFolderPickerDialog.h"
 
 #include "stb/stb_image.h"
-#include "stb/stb_image_resize2.h"
+#include "stb/deprecated/stb_image_resize2.h"
 #include "stb/stb_image_write.h"
 
 #include  "Logger.h"
@@ -333,6 +333,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
     ON_MESSAGE(WM_POSTOPEN, OnFilePostOpenmedia)
     ON_MESSAGE(WM_OPENFAILED, OnOpenMediaFailed)
     ON_MESSAGE(WM_MPC_RUN_DEFERRED, OnRunDeferredActions)
+    ON_MESSAGE(WM_MPC_UI_REQUEST, OnUIRequest)
     ON_MESSAGE(WM_TUNER_NEW_CHANNEL, OnHeadlessScanNewChannel)
     ON_MESSAGE(WM_TUNER_SCAN_END, OnHeadlessScanEnd)
     ON_MESSAGE(WM_DVB_EIT_DATA_READY, OnCurrentChannelInfoUpdated)
@@ -1029,6 +1030,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
     CMPCThemeUtil::enableWindows10DarkFrame(this);
 
+    // keep DWM rendering the frame, or uxtheme paints a basic frame while the style changes for fullscreen
+    DWMNCRENDERINGPOLICY policy = DWMNCRP_ENABLED;
+    ::DwmSetWindowAttribute(m_hWnd, DWMWA_NCRENDERING_POLICY, &policy, sizeof(policy));
+
     if (IsWindows8Point1OrGreater()) {
         m_dpi.Override(m_hWnd);
     }
@@ -1422,6 +1427,18 @@ bool CMainFrame::DeferIfNested(DeferredActionType type, std::function<void()> ac
     return true;
 }
 
+// A sent message is dispatched wherever this thread next retrieves one, which
+// includes the waits on the graph thread while a file opens or closes; the
+// builders only read the lists while the load state is LOADED, and that state
+// changes on this thread, so nothing is read while the graph thread rewrites it.
+LRESULT CMainFrame::OnUIRequest(WPARAM wParam, LPARAM lParam)
+{
+    auto pRequest = reinterpret_cast<UIRequest*>(lParam);
+    pRequest->build(this, pRequest->body);
+    pRequest->Release();
+    return 0;
+}
+
 void CMainFrame::OnClose()
 {
     CAppSettings& s = AfxGetAppSettings();
@@ -1492,7 +1509,7 @@ void CMainFrame::OnClose()
     m_wndPlaylistBar.SavePlaylist();
     m_wndPlaylistBar.ClearExternalPlaylistIfInvalid();
 
-    if (GetLoadState() == MLS::LOADED || GetLoadState() == MLS::LOADING) {
+    if (GetLoadState() == MLS::LOADED || GetLoadState() == MLS::LOADING || GetLoadState() == MLS::FAILING) {
         CloseMediaInternal();
     }
 
@@ -19883,6 +19900,9 @@ void CMainFrame::SetSubtitle(const SubtitleInput& subInput, bool skip_lcid /* = 
             } else {
                 m_wndSubresyncBar.SetSubtitle(nullptr, m_pCAP->GetFPS(), g_bExternalSubtitle);
             }
+            // an index into the previous track's subresync list means nothing for the new one
+            m_nCurSubtitle = -1;
+            m_lSubtitleShift = 0;
         }
     }
 
@@ -21710,11 +21730,11 @@ void CMainFrame::CloseMediaInternal(bool bNextIsQueued/* = false*/, bool bPendin
 
         // purge possible queued OnFilePostOpenmedia()
         if (PeekMessage(&msg, m_hWnd, WM_POSTOPEN, WM_POSTOPEN, PM_REMOVE | PM_NOYIELD)) {
-            free((OpenMediaData*)msg.lParam);
+            delete (OpenMediaData*)msg.lParam;
         }
         // purge possible queued OnOpenMediaFailed()
         if (PeekMessage(&msg, m_hWnd, WM_OPENFAILED, WM_OPENFAILED, PM_REMOVE | PM_NOYIELD)) {
-            free((OpenMediaData*)msg.lParam);
+            delete (OpenMediaData*)msg.lParam;
         }
 
         // abort finished, unset the flag
