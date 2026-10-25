@@ -240,6 +240,7 @@ Name: desktopicon\user;   Description: {cm:tsk_CurrentUser};       GroupDescript
 Name: desktopicon\common; Description: {cm:tsk_AllUsers};          GroupDescription: {cm:AdditionalIcons}; Flags: unchecked exclusive
 Name: quicklaunchicon;    Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked;             OnlyBelowVersion: 6.01
 Name: associate_files;    Description: {cm:tsk_AssociateFiles};    GroupDescription: {cm:tsk_Other};       Flags: checkedonce
+Name: enable_features;    Description: {cm:tsk_EnableFeatures};    GroupDescription: {cm:tsk_Other};       Flags: checkedonce
 Name: reset_settings;     Description: {cm:tsk_ResetSettings};     GroupDescription: {cm:tsk_Other};       Flags: checkedonce unchecked; Check: SettingsExist()
 
 
@@ -462,9 +463,9 @@ end;
 
 procedure CurPageChanged(CurPageID: Integer);
 begin
-  // checkedonce keeps a task that is new in this version checked on upgrades
+  // checkedonce keeps tasks that are new in this version checked on upgrades
   if (CurPageID = wpSelectTasks) and not ReturningToTasksPage and IsUpgrade() then
-    WizardSelectTasks('!associate_files');
+    WizardSelectTasks('!associate_files,!enable_features');
   ReturningToTasksPage := False;
 end;
 
@@ -487,6 +488,99 @@ begin
   try
     Exec(ExpandConstant('{app}\{#mpchc_exe}'), '/regvid /regaud', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
   except
+  end;
+end;
+
+
+procedure AddToolbarButton(var Data: AnsiString; Id: Integer);
+var
+  i, Offset: Integer;
+begin
+  // Each button is a 32-bit command id, least significant byte first
+  Offset := Length(Data);
+  SetLength(Data, Offset + 4);
+  for i := 1 to 4 do begin
+    Data[Offset + i] := Chr(Id and $FF);
+    Id := Id shr 8;
+  end;
+end;
+
+
+// The default toolbar buttons followed by Options, Subtitles, Audio and
+// Color Controls. The ids come from src/mpc-hc/resource.h.
+function GetToolbarLayout(): AnsiString;
+var
+  Data: AnsiString;
+begin
+  Data := '';
+  AddToolbarButton(Data, 957);   // ID_LEFTSEPARATOR
+  AddToolbarButton(Data, 887);   // ID_PLAY_PLAY
+  AddToolbarButton(Data, 888);   // ID_PLAY_PAUSE
+  AddToolbarButton(Data, 890);   // ID_PLAY_STOP
+  AddToolbarButton(Data, 921);   // ID_NAVIGATE_SKIPBACK
+  AddToolbarButton(Data, 894);   // ID_PLAY_DECRATE
+  AddToolbarButton(Data, 895);   // ID_PLAY_INCRATE
+  AddToolbarButton(Data, 922);   // ID_NAVIGATE_SKIPFORWARD
+  AddToolbarButton(Data, 891);   // ID_PLAY_FRAMESTEP
+  AddToolbarButton(Data, 815);   // ID_VIEW_OPTIONS
+  AddToolbarButton(Data, 979);   // ID_SUBTITLES
+  AddToolbarButton(Data, 978);   // ID_AUDIOS
+  AddToolbarButton(Data, 33464); // ID_COLOR_CONTROLS
+  AddToolbarButton(Data, 945);   // ID_DUMMYSEPARATOR
+  AddToolbarButton(Data, 909);   // ID_VOLUME_MUTE
+  Result := Data;
+end;
+
+
+// The player keeps binary values in the ini file as two letters per byte:
+// 'A' plus the low nibble, then 'A' plus the high nibble
+function GetIniBinaryString(const Data: AnsiString): String;
+var
+  i, b: Integer;
+begin
+  Result := '';
+  for i := 1 to Length(Data) do begin
+    b := Ord(Data[i]);
+    Result := Result + Chr(Ord('A') + (b and $F)) + Chr(Ord('A') + (b shr 4));
+  end;
+end;
+
+
+procedure EnableFeatures();
+var
+  sIniFile, sSettingsKey, sToolbarKey: String;
+  Layout: AnsiString;
+begin
+  sIniFile := ExpandConstant('{app}\{#mpchc_ini}');
+  sSettingsKey := 'Software\MPC-Kelpie\MPC-Kelpie\Settings';
+  sToolbarKey := 'Software\MPC-Kelpie\MPC-Kelpie\Toolbars\PlayerToolBar';
+  Layout := GetToolbarLayout();
+
+  // A toolbar layout that the user has already changed is kept
+  if FileExists(sIniFile) then begin
+    SetIniInt('Settings', 'MouseDragPanVideo', 1, sIniFile);
+    SetIniInt('Settings', 'MouseDragSubtitles', 1, sIniFile);
+    SetIniInt('Settings', 'RememberFileViewSettings', 1, sIniFile);
+    SetIniInt('Settings', 'RememberFileColorSettings', 1, sIniFile);
+    SetIniInt('Settings', 'InheritSettingsFromFolder', 1, sIniFile);
+    SetIniInt('Settings', 'KeepSubtitlePosAndSize', 1, sIniFile);
+    if not IniKeyExists('Toolbars\PlayerToolBar', 'ButtonSequence', sIniFile) then begin
+      SetIniString('Toolbars\PlayerToolBar', 'ButtonSequence', GetIniBinaryString(Layout), sIniFile);
+      SetIniInt('Toolbars\PlayerToolBar', 'ButtonSequenceSize', Length(Layout), sIniFile);
+      SetIniInt('Toolbars\PlayerToolBar', 'ButtonLayoutRevision', 1, sIniFile);
+    end;
+  end else begin
+    RegWriteDWordValue(HKCU, sSettingsKey, 'MouseDragPanVideo', 1);
+    RegWriteDWordValue(HKCU, sSettingsKey, 'MouseDragSubtitles', 1);
+    RegWriteDWordValue(HKCU, sSettingsKey, 'RememberFileViewSettings', 1);
+    RegWriteDWordValue(HKCU, sSettingsKey, 'RememberFileColorSettings', 1);
+    RegWriteDWordValue(HKCU, sSettingsKey, 'InheritSettingsFromFolder', 1);
+    RegWriteDWordValue(HKCU, sSettingsKey, 'KeepSubtitlePosAndSize', 1);
+    if not RegValueExists(HKCU, sToolbarKey, 'ButtonSequence') then begin
+      RegWriteBinaryValue(HKCU, sToolbarKey, 'ButtonSequence', Layout);
+      RegWriteDWordValue(HKCU, sToolbarKey, 'ButtonSequenceSize', Length(Layout));
+      RegWriteDWordValue(HKCU, sToolbarKey, 'ButtonLayoutRevision', 1);
+    end;
   end;
 end;
 
@@ -522,6 +616,9 @@ begin
 
     if IsTaskSelected('associate_files') then
       RegisterFileAssociations();
+
+    if IsTaskSelected('enable_features') then
+      EnableFeatures();
 
     iLanguage := StrToInt(ExpandConstant('{cm:langid}'));
     if IsComponentSelected('mpcresources') then begin
