@@ -239,6 +239,7 @@ Name: desktopicon;        Description: {cm:CreateDesktopIcon};     GroupDescript
 Name: desktopicon\user;   Description: {cm:tsk_CurrentUser};       GroupDescription: {cm:AdditionalIcons}; Flags: exclusive
 Name: desktopicon\common; Description: {cm:tsk_AllUsers};          GroupDescription: {cm:AdditionalIcons}; Flags: unchecked exclusive
 Name: quicklaunchicon;    Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked;             OnlyBelowVersion: 6.01
+Name: associate_files;    Description: {cm:tsk_AssociateFiles};    GroupDescription: {cm:tsk_Other};       Flags: checkedonce
 Name: reset_settings;     Description: {cm:tsk_ResetSettings};     GroupDescription: {cm:tsk_Other};       Flags: checkedonce unchecked; Check: SettingsExist()
 
 
@@ -457,6 +458,17 @@ begin
 end;
 
 
+procedure RegisterFileAssociations();
+var
+  ResultCode: Integer;
+begin
+  try
+    Exec(ExpandConstant('{app}\{#mpchc_exe}'), '/regvid /regaud', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  except
+  end;
+end;
+
+
 procedure CleanUpSettingsAndFiles();
 begin
   DeleteFile(ExpandConstant('{app}\{#mpchc_ini}'));
@@ -485,6 +497,9 @@ begin
       CleanUpSettingsAndFiles();
       RegWriteStringValue(HKCU, 'Software\MPC-Kelpie\MPC-Kelpie', 'ExePath', ExpandConstant('{app}\{#mpchc_exe}'));
     end;
+
+    if IsTaskSelected('associate_files') then
+      RegisterFileAssociations();
 
     iLanguage := StrToInt(ExpandConstant('{cm:langid}'));
     if IsComponentSelected('mpcresources') then begin
