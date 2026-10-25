@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Release tags are named `kelpie-<upstream version>-<n>`. Each entry includes
 the date the change was first made.
 
+## [Unreleased]
+
+### Added
+
+- The installer can register MPC-Kelpie for audio and video files. The
+  option is selected for a new installation and cleared for an upgrade.
+  Windows still asks which program to use by default (2026-10-25).
+
 ## [kelpie-2.8.4-1] - 2026-10-19
 
 Based on [clsid2/mpc-hc](https://github.com/clsid2/mpc-hc) `develop` at
@@ -109,6 +117,7 @@ New options are located in Options > Advanced and are disabled by default.
   [rami-bakhit/MPCVideoRenderer](https://github.com/rami-bakhit/MPCVideoRenderer),
   which also applies hue and saturation to Dolby Vision video (2026-09-26).
 
+[Unreleased]: https://github.com/rami-bakhit/mpc-kelpie/compare/kelpie-2.8.4-1...HEAD
 [kelpie-2.8.4-1]: https://github.com/rami-bakhit/mpc-kelpie/compare/kelpie-2.8.2-2...kelpie-2.8.4-1
 [kelpie-2.8.2-2]: https://github.com/rami-bakhit/mpc-kelpie/compare/kelpie-2.8.2-1...kelpie-2.8.2-2
 [kelpie-2.8.2-1]: https://github.com/rami-bakhit/mpc-kelpie/releases/tag/kelpie-2.8.2-1

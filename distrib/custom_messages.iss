@@ -39,6 +39,7 @@ en.comp_mpcresources=Translations
 en.msg_DeleteSettings=Do you also want to delete MPC-Kelpie settings?%n%nIf you plan on installing MPC-Kelpie again then you do not have to delete them.
 en.msg_simd_sse2=This build of MPC-Kelpie requires a CPU with SSE2 extension support.%n%nYour CPU does not have those capabilities.
 en.tsk_AllUsers=For all users
+en.tsk_AssociateFiles=Register MPC-Kelpie for audio and video files
 en.tsk_CurrentUser=For the current user only
 en.tsk_Other=Other tasks:
 en.tsk_ResetSettings=Reset settings

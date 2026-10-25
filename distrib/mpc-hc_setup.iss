@@ -239,6 +239,7 @@ Name: desktopicon;        Description: {cm:CreateDesktopIcon};     GroupDescript
 Name: desktopicon\user;   Description: {cm:tsk_CurrentUser};       GroupDescription: {cm:AdditionalIcons}; Flags: exclusive
 Name: desktopicon\common; Description: {cm:tsk_AllUsers};          GroupDescription: {cm:AdditionalIcons}; Flags: unchecked exclusive
 Name: quicklaunchicon;    Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked;             OnlyBelowVersion: 6.01
+Name: associate_files;    Description: {cm:tsk_AssociateFiles};    GroupDescription: {cm:tsk_Other};       Flags: checkedonce
 Name: reset_settings;     Description: {cm:tsk_ResetSettings};     GroupDescription: {cm:tsk_Other};       Flags: checkedonce unchecked; Check: SettingsExist()
 
 
@@ -446,12 +447,45 @@ begin
 end;
 
 
+var
+  ReturningToTasksPage: Boolean;
+
+
+function BackButtonClick(CurPageID: Integer): Boolean;
+begin
+  // Going back from the Ready page shows the tasks page without rebuilding it
+  if CurPageID = wpReady then
+    ReturningToTasksPage := True;
+  Result := True;
+end;
+
+
+procedure CurPageChanged(CurPageID: Integer);
+begin
+  // checkedonce keeps a task that is new in this version checked on upgrades
+  if (CurPageID = wpSelectTasks) and not ReturningToTasksPage and IsUpgrade() then
+    WizardSelectTasks('!associate_files');
+  ReturningToTasksPage := False;
+end;
+
+
 procedure UnregisterFileAssociations();
 var
   ResultCode: Integer;
 begin
   try
     Exec(ExpandConstant('{app}\{#mpchc_exe}'), '/unregall', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  except
+  end;
+end;
+
+
+procedure RegisterFileAssociations();
+var
+  ResultCode: Integer;
+begin
+  try
+    Exec(ExpandConstant('{app}\{#mpchc_exe}'), '/regvid /regaud', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
   except
   end;
 end;
@@ -485,6 +519,9 @@ begin
       CleanUpSettingsAndFiles();
       RegWriteStringValue(HKCU, 'Software\MPC-Kelpie\MPC-Kelpie', 'ExePath', ExpandConstant('{app}\{#mpchc_exe}'));
     end;
+
+    if IsTaskSelected('associate_files') then
+      RegisterFileAssociations();
 
     iLanguage := StrToInt(ExpandConstant('{cm:langid}'));
     if IsComponentSelected('mpcresources') then begin
