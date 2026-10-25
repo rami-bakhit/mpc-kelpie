@@ -69,6 +69,10 @@ msgctxt "CustomMessages_tsk_AllUsers"
 msgid "For all users"
 msgstr "Dla wszystkich użytkowników"
 
+msgctxt "CustomMessages_tsk_AssociateFiles"
+msgid "Register MPC-Kelpie for audio and video files"
+msgstr "Zarejestruj MPC-Kelpie dla plików audio i wideo"
+
 msgctxt "CustomMessages_tsk_CurrentUser"
 msgid "For the current user only"
 msgstr "Tylko dla bieżącego użytkownika"

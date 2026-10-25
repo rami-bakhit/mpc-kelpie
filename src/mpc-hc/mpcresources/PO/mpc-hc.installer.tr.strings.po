@@ -72,6 +72,10 @@ msgctxt "CustomMessages_tsk_AllUsers"
 msgid "For all users"
 msgstr "Tüm kullanıcılar için"
 
+msgctxt "CustomMessages_tsk_AssociateFiles"
+msgid "Register MPC-Kelpie for audio and video files"
+msgstr ""
+
 msgctxt "CustomMessages_tsk_CurrentUser"
 msgid "For the current user only"
 msgstr "Sadece geçerli kullanıcı için"
