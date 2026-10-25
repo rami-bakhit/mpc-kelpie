@@ -14,6 +14,10 @@ the date the change was first made.
 - The installer can register MPC-Kelpie for audio and video files. The
   option is selected for a new installation and cleared for an upgrade.
   Windows still asks which program to use by default (2026-10-25).
+- The installer can turn on the MPC-Kelpie options in Options > Advanced
+  and add the Options, Subtitles, Audio and Color Controls buttons to the
+  toolbar. The option is selected for a new installation and cleared for an
+  upgrade. A toolbar layout that was already changed is kept (2026-10-25).
 
 ## [kelpie-2.8.4-1] - 2026-10-19
 
