@@ -80,6 +80,10 @@ msgctxt "CustomMessages_tsk_CurrentUser"
 msgid "For the current user only"
 msgstr "Solo per l'utente corrente"
 
+msgctxt "CustomMessages_tsk_EnableFeatures"
+msgid "Turn on MPC-Kelpie features and add more buttons to the toolbar"
+msgstr ""
+
 msgctxt "CustomMessages_tsk_Other"
 msgid "Other tasks:"
 msgstr "Altre operazioni:"

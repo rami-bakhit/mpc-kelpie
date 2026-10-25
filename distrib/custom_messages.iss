@@ -41,6 +41,7 @@ en.msg_simd_sse2=This build of MPC-Kelpie requires a CPU with SSE2 extension sup
 en.tsk_AllUsers=For all users
 en.tsk_AssociateFiles=Register MPC-Kelpie for audio and video files
 en.tsk_CurrentUser=For the current user only
+en.tsk_EnableFeatures=Turn on MPC-Kelpie features and add more buttons to the toolbar
 en.tsk_Other=Other tasks:
 en.tsk_ResetSettings=Reset settings
 en.types_DefaultInstallation=Default installation
