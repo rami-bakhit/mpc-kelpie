@@ -447,6 +447,28 @@ begin
 end;
 
 
+var
+  ReturningToTasksPage: Boolean;
+
+
+function BackButtonClick(CurPageID: Integer): Boolean;
+begin
+  // Going back from the Ready page shows the tasks page without rebuilding it
+  if CurPageID = wpReady then
+    ReturningToTasksPage := True;
+  Result := True;
+end;
+
+
+procedure CurPageChanged(CurPageID: Integer);
+begin
+  // checkedonce keeps a task that is new in this version checked on upgrades
+  if (CurPageID = wpSelectTasks) and not ReturningToTasksPage and IsUpgrade() then
+    WizardSelectTasks('!associate_files');
+  ReturningToTasksPage := False;
+end;
+
+
 procedure UnregisterFileAssociations();
 var
   ResultCode: Integer;
