@@ -79,9 +79,9 @@ The release packages include MPC Video Renderer built from
 with patches that allow hue and saturation in Color Controls to apply to
 Dolby Vision video in both DirectX 9 and DirectX 11 modes.
 
-MPC-Kelpie 2.8.4-1 includes our build of MPC Video Renderer 0.10.9.2605,
-from commit `77ef37c`, based on clsid2/MPCVideoRenderer at `e55dd16`.
-It does not include the HDR-to-SDR tone mapping improvements in
+MPC-Kelpie 2.8.4-2 includes our build of MPC Video Renderer 0.11.0.2625,
+from commit `7af92e3`, based on clsid2/MPCVideoRenderer at `d6674bb`.
+This is a development version of the renderer, newer than
 MPC Video Renderer 0.10.10.2618 bundled with MPC-HC 2.8.4.
 
 ## Running alongside MPC-HC
